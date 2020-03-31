@@ -92,5 +92,40 @@ curl --header "Content-Type: application/json" \
 The output from the index is a JSON object containing the top K hits from the index, an example of the API is given below:
 
 ```
-
+TODO
 ```
+
+## Citation and Acknowledgements
+
+Thanks to the authors of the various libraries that made this possible!
+
+### [sentence-transformers](https://github.com/UKPLab/sentence-transformers)
+```
+@inproceedings{reimers-2019-sentence-bert,
+    title = "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks",
+    author = "Reimers, Nils and Gurevych, Iryna",
+    booktitle = "Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing",
+    month = "11",
+    year = "2019",
+    publisher = "Association for Computational Linguistics",
+    url = "http://arxiv.org/abs/1908.10084",
+}
+```
+
+### [cord-19](https://pages.semanticscholar.org/coronavirus-research)
+```
+COVID-19 Open Research Dataset (CORD-19). 2020. Version 2020-03-20. Retrieved from https://pages.semanticscholar.org/coronavirus-research. Accessed YYYY-MM-DD. doi:10.5281/zenodo.3715505
+```
+
+### [scibert](https://github.com/allenai/scibert)
+```
+@inproceedings{Beltagy2019SciBERT,
+  title={SciBERT: Pretrained Language Model for Scientific Text},
+  author={Iz Beltagy and Kyle Lo and Arman Cohan},
+  year={2019},
+  booktitle={EMNLP},
+  Eprint={arXiv:1903.10676}
+}
+```
+
+### [nmslib](https://github.com/nmslib/nmslib)
