@@ -53,9 +53,9 @@ def search_index(sentences, model, batch_size, k, num_workers, articles, index, 
 def add_search_args(parser):
     parser.add_argument('--index_path', default="index",
                         help='Path to the created index')
-    parser.add_argument('--articles_path', default="cord_19.json",
+    parser.add_argument('--articles_path', default="datasets/cord_19/cord_19.json",
                         help='Path to the extracted sentences')
-    parser.add_argument('--mapping_path', default="sent_article_mapping.json",
+    parser.add_argument('--mapping_path', default="datasets/cord_19/cord_19_sent_to_article_mapping.json",
                         help='Path to the generated mapping from the embeddings script')
     parser.add_argument('--model_name_or_path', default='bert-base-nli-mean-tokens')
     parser.add_argument('--batch_size', default=8, type=int,

@@ -1,0 +1,3 @@
+[submodule "sentence-transformers"]
+	path = sentence-transformers
+	url = https://github.com/SeanNaren/sentence-transformers.git
