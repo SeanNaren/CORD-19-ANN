@@ -7,7 +7,7 @@ We include instructions to finetune [SciBERT](https://github.com/allenai/scibert
 
 Finally we provide a front-end that can be used to search through the journals and extract information via a UI. Instructions and installation for the front-end can be found [here](TODO).
 
-### Installation
+## Installation
 
 We assume you have installed PyTorch and the necessary CUDA packages from [here](https://pytorch.org/).
 ```
@@ -17,7 +17,7 @@ pip install -r requirements.txt
 pip install .
 ```
 
-## Pre-trained Search
+## Pre-trained
 
 Coming Soon!
 
@@ -25,7 +25,7 @@ Coming Soon!
 
 The process requires a GPU enabled node such as a GCP n8 node with a nvidia-tesla-v100 with atleast 40GB RAM. The Index requires around 20GB and the embeddings another 19GB.
 
-## Format CORD-19 Data
+### Preparing the dataset
 
 Currently we tokenize at the sentence level using SciSpacy, however future work may look into using paragraph level tokenization.
 
@@ -35,15 +35,15 @@ python download_data.py --output_path datasets/cord_19/
 python extract_sentences.py --input_path datasets/cord_19/ --output_path cord_19.json --num_workers 16
 ```
 
-## Generating embeddings
+### Generating embeddings
  
-### Using pre-trained SBERT
+#### Using pre-trained SBERT
 
 ```
 python generate_embeddings.py --input_path cord_19.json --output_path pretrained_embeddings.npy --device cuda --batch_size 256
 ```
 
-### Using fine-tuned SciBERT
+#### Using fine-tuned SciBERT
 
 Currently we don't offer pre-trained models, thus we'll need to train from scratch. This takes a few hours on a GCP n8 node with a nvidia-tesla-v100.
 
@@ -54,14 +54,14 @@ python sentence-transformers/examples/training_nli_transformers.py --model_name_
 python generate_embeddings.py --model_name_or_path output/{REPLACE PATH TO MODEL HERE} --output_path scibert_embeddings.py
 ```
 
-## Create the Index
+### Create the Index
 
 ```
 python create_index.py --output_path index --embedding_path pretrained_embeddings.npy # Swap to scibert_embeddings.py if using fine-tuned SciBERT embeddings
 python search_index.py --index_path index  --device cpu -k 10 --input_path sentences.txt --output_path output.json
 ```
 
-## Searching the Index
+### Searching the Index
 
 We recommend using the server but we do offer a simple script to search given a text file of sentences:
 
@@ -70,7 +70,7 @@ echo "These RNA transcripts may be spliced to give rise to mRNAs encoding the en
 python search_index.py --index_path index  --device cpu --input_path sentences.txt --output_path output.json
 ```
 
-### Server
+#### Using the server
 
 To start the server:
 ```
@@ -87,7 +87,7 @@ curl --header "Content-Type: application/json" \
   http://YOUR_IP:YOUR_PORT/query
 ```
 
-## Output
+### Output Format
 
 The output from the index is a JSON object containing the top K hits from the index, an example of the API is given below:
 
