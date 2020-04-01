@@ -3,9 +3,9 @@
 This repo allows us to search through the [CORD-19](https://pages.semanticscholar.org/coronavirus-research) 
 dataset using [S-BERT](https://github.com/UKPLab/sentence-transformers) embeddings via [nmslib](https://github.com/nmslib/nmslib/blob/master/python_bindings/README.md). 
 
-We include instructions to finetune [SciBERT](https://github.com/allenai/scibert) on the NLI dataset using a modified Sentence Transformers package to improve understanding of scientific text.
+We include instructions to finetune [SciBERT](https://github.com/allenai/scibert) which has ben trained on scientific text, on the NLI dataset using a modified Sentence Transformers package.
 
-Finally we provide a front-end that can be used to search through the journals and extract information via a UI. Instructions and installation for the front-end can be found [here](frontend/README.md).
+Finally we provide a front-end that can be used to search through the dataset and extract information via a UI. Instructions and installation for the front-end can be found [here](frontend/README.md).
 
 ## Installation
 
@@ -17,7 +17,7 @@ cd CORD-19-ANN/
 pip install -r requirements.txt
 pip install .
 
-# If you plan to fine-tune a SciBERT using mixed-precision
+# If you plan to finetune SciBERT from scratch using mixed-precision
 git clone https://github.com/NVIDIA/apex.git
 cd apex/
 pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
@@ -28,7 +28,7 @@ pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cud
 We also provide a docker container if preferred:
 
 ```
-docker pull seannaren/CORD-19-ANN
+docker pull seannaren/cord-19-ann
 ```
 
 ## From Scratch
@@ -47,7 +47,7 @@ python extract_sentences.py --input_path datasets/cord_19/ --num_workers 16
 
 ### Generating embeddings
  
-#### Using pre-trained SBERT
+#### Using pre-trained S-BERT
 
 ```
 python generate_embeddings.py --model_name_or_path bert-base-nli-mean-tokens --embedding_path pretrained_embeddings.npy --device cuda --batch_size 256

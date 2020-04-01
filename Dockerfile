@@ -11,10 +11,6 @@ RUN conda install -c conda-forge spacy
 
 WORKDIR /workspace/
 
-# Install apex
-RUN git clone --recursive https://github.com/NVIDIA/apex.git
-RUN cd apex; pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
-
 # Install CORD-19-ANN
 ADD . /workspace/CORD-19-ANN
 
