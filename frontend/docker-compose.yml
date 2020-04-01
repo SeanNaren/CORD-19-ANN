@@ -1,0 +1,16 @@
+version: '3.3'
+
+services:
+  frontend: 
+    container_name: frontend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - '.:/usr/src/app'
+      - '/usr/node_modules'
+    environment:
+      - NODE_ENV=development
+    ports:
+      - '8080:8080'
+    command: run doc
