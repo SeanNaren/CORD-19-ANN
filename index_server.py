@@ -11,6 +11,11 @@ from cord_ann.embeddings import load_embedding_model
 
 
 class QueryHandler(tornado.web.RequestHandler):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+
     def data_received(self, chunk):
         pass
 
@@ -21,11 +26,18 @@ class QueryHandler(tornado.web.RequestHandler):
         self.model = model
         self.sent_article_mapping = sent_article_mapping
 
+    def options(self):
+        # no body
+        self.set_status(204)
+        self.finish()
+
     def post(self):
         if self.request.headers.get("Content-Type", "").startswith("application/json"):
             sentences = json.loads(self.request.body)
+            is_json = True
         else:
-            sentences = []
+            sentences = [self.request.body.decode("utf-8")]
+            is_json = False
         results = search_index(sentences=sentences,
                                model=self.model,
                                batch_size=self.args.batch_size,
@@ -34,6 +46,7 @@ class QueryHandler(tornado.web.RequestHandler):
                                articles=self.articles,
                                index=self.index,
                                mapping=self.sent_article_mapping)
+        results = results if is_json else results[0]  # Assume if not json, it was a single sentence
         self.write(json.dumps(results, ensure_ascii=False))
         self.finish()
 
@@ -69,6 +82,7 @@ if __name__ == "__main__":
         'sent_article_mapping': sent_article_mapping
     }
     app = make_app(args=app_arguments)
+    print("Index Server is listening...")
     app.listen(port=args.port,
                address=args.address)
     tornado.ioloop.IOLoop.current().start()
