@@ -1,11 +1,19 @@
 # CORD-19-ANN
 
-This repo allows us to search through the [CORD-19](https://pages.semanticscholar.org/coronavirus-research) 
+![cord_website](./imgs/cord_ann_example.gif)
+
+This repo allows searching through the [CORD-19](https://pages.semanticscholar.org/coronavirus-research) 
 dataset using [S-BERT](https://github.com/UKPLab/sentence-transformers) embeddings via [nmslib](https://github.com/nmslib/nmslib/blob/master/python_bindings/README.md). 
 
-We include instructions to finetune [SciBERT](https://github.com/allenai/scibert) which has ben trained on scientific text, on the NLI dataset using a modified Sentence Transformers package.
+We're not versed in the medical field, so any feedback or improvements we deeply encourage in the form of issues/PRs!
+
+We include a the pre-trained SciBERT model and instructions to finetune [SciBERT](https://github.com/allenai/scibert) which has ben trained on scientific text, on the NLI dataset using a modified Sentence Transformers package.
 
 Finally we provide a front-end that can be used to search through the dataset and extract information via a UI. Instructions and installation for the front-end can be found [here](frontend/README.md).
+
+Currently we do not have a server running (if anyone can help that would be great!). We'll work to try provide the index and metadata such that setup is not required from scratch.
+
+We do however provide the pre-trained SciBERT model, which can be downloaded following the instructions below. 
 
 ## Installation
 
@@ -46,20 +54,22 @@ python extract_sentences.py --input_path datasets/cord_19/ --num_workers 16
 ```
 
 ### Generating embeddings
- 
-#### Using pre-trained S-BERT
-
-```
-python generate_embeddings.py --model_name_or_path bert-base-nli-mean-tokens --embedding_path pretrained_embeddings.npy --device cuda --batch_size 256
-```
 
 #### Using fine-tuned SciBERT
 
 ##### Using Pre-trained SciBERT
 
 ```
-wget TODO
+wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-scibert-pretrained.tar.gz
 python generate_embeddings.py --model_name_or_path s-scibert-pretrained/ --embedding_path scibert_embeddings.npy --device cuda --batch_size 256
+```
+
+#### Using pre-trained S-BERT
+
+You can also use the standard pre-trained model from the S-BERT repo like below.
+
+```
+python generate_embeddings.py --model_name_or_path bert-base-nli-mean-tokens --embedding_path pretrained_embeddings.npy --device cuda --batch_size 256
 ```
 
 ##### Training the model from scratch

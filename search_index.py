@@ -25,7 +25,8 @@ def extract_k_hits(result, sentence, articles, sent_article_mapping):
             "authors": article['metadata']['authors'],
             "paragraph": article['body_text'][paragraph_idx],
             "sentence": article['body_text'][paragraph_idx]["sentences"][sentence_idx],
-            "abstract": article['abstract']
+            "abstract": article['abstract'],
+            "distance": float(distance)
         })
     return extracted
 
