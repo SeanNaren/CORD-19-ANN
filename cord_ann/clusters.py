@@ -1,13 +1,7 @@
 from sklearn.cluster import KMeans
 
-from cord_ann.embeddings import encode_sentences
 
-
-def encode_and_cluster(sentences, model, batch_size, num_clusters):
-    embeddings = encode_sentences(model=model,
-                                  batch_size=batch_size,
-                                  sentences=sentences)
-
+def cluster_embeddings(embeddings, sentences, num_clusters):
     clustering_model = KMeans(n_clusters=num_clusters)
     clustering_model.fit(embeddings)
     cluster_assignment = clustering_model.labels_

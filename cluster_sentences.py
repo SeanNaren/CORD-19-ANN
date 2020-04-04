@@ -1,8 +1,8 @@
 import argparse
 from pathlib import Path
 
-from cord_ann.clusters import encode_and_cluster
-from cord_ann.embeddings import load_embedding_model
+from cord_ann.clusters import cluster_embeddings
+from cord_ann.embeddings import load_embedding_model, encode_sentences
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Takes a text file of sentences and applies clustering '
@@ -19,9 +19,12 @@ if __name__ == "__main__":
     sentences = Path(args.input_path).read_text().split('\n')
     model = load_embedding_model(model_name_or_path=args.model_name_or_path,
                                  device=args.device)
-    clusters = encode_and_cluster(sentences=sentences,
-                                  model=model,
+
+    embeddings = encode_sentences(model=model,
                                   batch_size=args.batch_size,
+                                  sentences=sentences)
+    clusters = cluster_embeddings(sentences=sentences,
+                                  embeddings=embeddings,
                                   num_clusters=args.num_clusters)
 
     for i, cluster in enumerate(clusters):
