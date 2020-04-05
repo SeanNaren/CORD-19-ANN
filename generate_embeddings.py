@@ -19,7 +19,7 @@ if __name__ == "__main__":
     parser.add_argument('--device', default='cuda')
     args = parser.parse_args()
 
-    with open(args.input_path) as f:
+    with open(args.articles_path) as f:
         articles = json.load(f)
 
     sentences = flatten_sentences(articles)
