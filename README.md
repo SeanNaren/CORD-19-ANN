@@ -39,9 +39,9 @@ We also provide a docker container if preferred:
 docker pull seannaren/cord-19-ann
 ```
 
-## From Scratch
+## Creating the Index from scratch
 
-The process requires a GPU enabled node such as a GCP n8 node with a nvidia-tesla-v100 with atleast 40GB RAM. The Index requires around 20GB and the embeddings another 19GB.
+The process requires a GPU enabled node such as a GCP n8 node with a nvidia-tesla-v100 to generate the embeddings, with atleast 40GB RAM. The Index requires around 20GB and the embeddings another 19GB on hard disk, and around 32GB RAM to run search.
 
 ### Preparing the dataset
 
@@ -124,7 +124,7 @@ To test the server:
 curl --header "Content-Type: application/json" \
   --request POST \
   --data '["These RNA transcripts may be spliced to give rise to mRNAs encoding the envelope (Env) glycoproteins (Fig. 1a)"]' \
-  http://YOUR_IP:YOUR_PORT/query
+  http://$YOUR_IP:$YOUR_PORT/query
 ```
 
 ### Output Format
@@ -150,6 +150,14 @@ The output from the index is a JSON object containing the top K hits from the in
     ]
   }
 ]
+```
+
+### Clustering
+
+We also took the example clustering script out of sentence-transformers and added it to this repository for using the pre-trained models. An example below:
+
+```
+python cluster_sentences.py --input_path sentences.txt --model_name_or_path s-scibert-pretrained/ --device cpu
 ```
 
 ## Citation and Acknowledgements
@@ -186,3 +194,5 @@ COVID-19 Open Research Dataset (CORD-19). 2020. Version 2020-03-20. Retrieved fr
 ```
 
 ### [nmslib](https://github.com/nmslib/nmslib)
+
+### [CORD-19](https://pages.semanticscholar.org/coronavirus-research)

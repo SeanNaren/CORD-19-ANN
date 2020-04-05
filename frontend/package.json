@@ -1,4 +1,5 @@
 {
+  "homepage": "http://seannaren.github.io/CORD-19-ANN",
   "name": "template-frontend-react-redux-mui",
   "version": "1.0.0",
   "description": "A template for quickly setting up a react/redux/Material UI frontend",
@@ -21,7 +22,9 @@
     "dev:hot": "webpack-dev-server --mode development --progress --hot",
     "serve": "serve build",
     "setup": "touch .env && npm install && npm audit fix",
-    "test": "jest"
+    "test": "jest",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "author": "Maher Atashfaraz",
   "license": "ISC",
@@ -72,6 +75,7 @@
     "style-loader": "^0.23.1",
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.6",
-    "webpack-dev-server": "^3.7.2"
+    "webpack-dev-server": "^3.7.2",
+    "gh-pages": "^2.0.1"
   }
 }

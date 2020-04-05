@@ -1,11 +1,13 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { makeStyles } from '@material-ui/core/styles';
-import ExpansionPanel from '@material-ui/core/ExpansionPanel';
-import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import MuiExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
+import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CustomizedTabs from './ResultCard'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -13,12 +15,13 @@ const useStyles = makeStyles((theme) => ({
         padding: '10px 5px'
     },
     heading: {
-        fontSize: theme.typography.pxToRem(15),
+        fontSize: theme.typography.pxToRem(18),
+        fontWeight: 500,
         flexBasis: '33.33%',
         flexShrink: 0,
     },
     secondaryHeading: {
-        fontSize: theme.typography.pxToRem(15),
+        fontSize: theme.typography.pxToRem(13),
         color: theme.palette.text.secondary,
     },
     searchTitle: {
@@ -36,6 +39,25 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
+const ExpansionPanel = withStyles({
+  root: {
+    marginBottom: '10px',
+  },
+  expanded: {},
+})(MuiExpansionPanel);
+
+const ExpansionPanelSummary = withStyles({
+  content: {
+    'display': 'initial',
+    'padding': '0px 24px 0px 24px'
+  }
+})(MuiExpansionPanelSummary);
+
+const ExpansionPanelDetails = withStyles({
+  root: {
+    'padding': '8px 49px 24px',
+  }
+})(MuiExpansionPanelDetails);
 
 export default function ResultShow(props) {
     const classes = useStyles();
@@ -55,8 +77,8 @@ export default function ResultShow(props) {
                         aria-controls="panel1bh-content"
                         id="panel1bh-header"
                     >
-                        <Typography className={classes.heading} variant='h4'>{item.title === "" ? 'No Title' : item.title}</Typography>
-                        <Typography className={classes.secondaryHeading}>{item.sentence}</Typography>
+                        <Typography className={classes.heading} variant='h1'>{item.title === "" ? 'No Title' : item.title}</Typography>
+                        <Typography className={classes.secondaryHeading} variant='body1'>Matching Sentence: {item.sentence}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.expansionDetails}>
                         <div className={classes.authors}>
@@ -67,12 +89,7 @@ export default function ResultShow(props) {
                             })}
                         </div>
                         <div>
-                            <Typography variant='body1' >
-                                {item.paragraph.text}
-                            </Typography>
-                            <Typography variant='overline' style={{fontSize:13, fontWeight:"bold"}} >
-                                Cosine Distance: {Number((item.distance).toFixed(4))}
-                            </Typography>
+                        {CustomizedTabs(item)}
                         </div>
                     </ExpansionPanelDetails>
                 </ExpansionPanel>)
