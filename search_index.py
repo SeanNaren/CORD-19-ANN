@@ -15,8 +15,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     sentences = Path(args.input_path).read_text().strip().split('\n')
     sent_article_mapping = load_sentence_to_article_mapping(args.mapping_path)
-    with open(args.articles_path) as f:
-        articles = json.load(f)
 
     model = EmbeddingModel(model_name_or_path=args.model_name_or_path,
                            device=args.device,
@@ -25,7 +23,7 @@ if __name__ == "__main__":
 
     index = Index(index_path=args.index_path,
                   index_type=args.index_type,
-                  articles=articles,
+                  articles_path=args.articles_path,
                   mapping=sent_article_mapping,
                   k=args.k,
                   num_workers=args.num_workers)

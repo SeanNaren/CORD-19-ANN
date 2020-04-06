@@ -1,11 +1,14 @@
+import json
+from pathlib import Path
+
 import numpy as np
 
 
 class Index:
-    def __init__(self, index_path, index_type, articles, mapping, k, num_workers):
+    def __init__(self, index_path, index_type, articles_path, mapping, k, num_workers):
         self.index = self.load_index(index_path, index_type)
         self.index_type = index_type
-        self.articles = articles
+        self.articles_path = articles_path
         self.mapping = mapping
         self.k = k
         self.num_workers = num_workers
@@ -35,11 +38,17 @@ class Index:
         results = self._format_results(batch_ids=batch_ids,
                                        batch_distances=batch_distances,
                                        sentences=sentences,
-                                       articles=self.articles,
+                                       articles_path=self.articles_path,
                                        mapping=self.mapping)
         return results
 
-    def _extract_k_hits(self, ids, distances, sentence, articles, sent_article_mapping):
+    def _load_article(self, articles_path, paper_id):
+        json_path = Path(articles_path) / paper_id + '.json'
+        with json_path.open() as f:
+            article = json.load(f)
+        return article
+
+    def _extract_k_hits(self, ids, distances, sentence, articles_path, sent_article_mapping):
         extracted = {
             "query": sentence,
             "hits": []
@@ -47,10 +56,10 @@ class Index:
 
         for id, distance in zip(ids, distances):
             mapping = sent_article_mapping[id]
-            article_idx = mapping["article_idx"]
             paragraph_idx = mapping["paragraph_idx"]
             sentence_idx = mapping["sentence_idx"]
-            article = articles[article_idx]
+            article = self._load_article(articles_path=articles_path,
+                                         paper_id=mapping["paper_id"])
             extracted["hits"].append({
                 "title": article['metadata']['title'],
                 "authors": article['metadata']['authors'],
@@ -61,11 +70,11 @@ class Index:
             })
         return extracted
 
-    def _format_results(self, batch_ids, batch_distances, sentences, articles, mapping):
+    def _format_results(self, batch_ids, batch_distances, sentences, articles_path, mapping):
         return [self._extract_k_hits(ids=batch_ids[x],
                                      distances=batch_distances[x],
                                      sentence=query_sentence,
-                                     articles=articles,
+                                     articles_path=articles_path,
                                      sent_article_mapping=mapping) for x, query_sentence in enumerate(sentences)]
 
 
