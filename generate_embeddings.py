@@ -4,7 +4,7 @@ import json
 import numpy as np
 
 from cord_ann.embeddings import load_embedding_model, encode_sentences
-from cord_ann.mapping import flatten_sentences, create_mapping
+from cord_ann.mapping import flatten_sentences, create_sentence_to_article_mapping
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -23,7 +23,7 @@ if __name__ == "__main__":
         articles = json.load(f)
 
     sentences = flatten_sentences(articles)
-    sent_article_mapping = create_mapping(articles)
+    sent_article_mapping = create_sentence_to_article_mapping(articles)
     model = load_embedding_model(model_name_or_path=args.model_name_or_path,
                                  device=args.device)
     sentence_embeddings = encode_sentences(model=model,

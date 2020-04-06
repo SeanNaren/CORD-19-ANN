@@ -6,7 +6,7 @@ import tarfile
 from tqdm import tqdm
 
 datasets = ['comm_use_subset.tar.gz', 'noncomm_use_subset.tar.gz', 'custom_license.tar.gz']
-server = "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-27/"
+server = "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-04-03/"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

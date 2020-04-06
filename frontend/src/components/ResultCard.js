@@ -110,7 +110,7 @@ export default function CustomizedTabs(item) {
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Typography variant='overline' style={{fontSize:13, fontWeight:"bold"}} >
-            Cosine Distance: {Number((item.distance).toFixed(4))}
+            Distance: {Number((item.distance).toFixed(4))}
           </Typography>
         </TabPanel>
         <Typography className={classes.padding} />

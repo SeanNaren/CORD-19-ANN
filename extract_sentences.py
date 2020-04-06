@@ -3,7 +3,7 @@ import argparse
 import json
 from multiprocessing.pool import Pool
 
-from cord_ann.mapping import flatten_sentences, create_mapping
+from cord_ann.mapping import flatten_sentences, create_sentence_to_article_mapping
 from tqdm import tqdm
 from pathlib import Path
 import spacy
@@ -43,5 +43,5 @@ if __name__ == "__main__":
     with open(output_dir / 'cord_19_sentences.txt') as f:
         f.write('\n'.join(flatten_sentences(articles)))
     with open(output_dir / 'cord_19_sent_to_article_mapping.json') as f:
-        sent_article_mapping = create_mapping(articles)
+        sent_article_mapping = create_sentence_to_article_mapping(articles)
         json.dump(sent_article_mapping, f)

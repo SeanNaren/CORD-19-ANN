@@ -3,7 +3,7 @@ import json
 from tqdm import tqdm
 
 
-def create_mapping(articles):
+def create_sentence_to_article_mapping(articles):
     mapping = []
     for article_idx, article in tqdm(enumerate(articles), total=len(articles)):
         for paragraph_idx, paragraph in enumerate(article['body_text']):
@@ -16,7 +16,7 @@ def create_mapping(articles):
     return mapping
 
 
-def load_mapping(mapping_path):
+def load_sentence_to_article_mapping(mapping_path):
     with open(mapping_path) as f:
         mapping = json.load(f)
     return mapping
