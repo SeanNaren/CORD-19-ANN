@@ -96,4 +96,6 @@ def search_args(parser):
                         help='The top K hits to return from the index')
     parser.add_argument('--device', default='cpu',
                         help='Set to cuda to use the GPU')
+    parser.add_argument('--silent', action="store_true",
+                        help='Turn off progress bar when searching')
     return parser

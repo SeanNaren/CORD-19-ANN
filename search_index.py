@@ -19,7 +19,7 @@ if __name__ == "__main__":
     model = EmbeddingModel(model_name_or_path=args.model_name_or_path,
                            device=args.device,
                            batch_size=args.batch_size,
-                           show_progress_bar=args.show_progress_bar)
+                           show_progress_bar=not args.silent)
 
     index = Index(index_path=args.index_path,
                   index_type=args.index_type,
