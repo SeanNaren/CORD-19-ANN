@@ -46,7 +46,7 @@ export default function SearchBar() {
                 <InputBase
                     className={classes.input}
                     placeholder="Enter sentence to search"
-                    onChange={handleClick}
+                    onClick={handleClick}
                 />
                 <IconButton className={classes.iconButton} aria-label="search">
                     <SearchIcon />
