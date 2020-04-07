@@ -43,7 +43,7 @@ class Index:
         return results
 
     def _load_article(self, articles_path, paper_id):
-        json_path = Path(articles_path) / paper_id + '.json'
+        json_path = Path(articles_path) / (paper_id + '.json')
         with json_path.open() as f:
             article = json.load(f)
         return article
