@@ -5,7 +5,7 @@ from tqdm import tqdm
 
 def create_sentence_to_article_mapping(articles):
     mapping = []
-    for article in tqdm(enumerate(articles), total=len(articles)):
+    for article in tqdm(articles, total=len(articles)):
         for paragraph_idx, paragraph in enumerate(article['body_text']):
             sentence_mappings = [{
                 "sentence_idx": sentence_idx,
