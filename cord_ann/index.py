@@ -25,11 +25,14 @@ class Index:
             raise TypeError('Index type can only be faiss or nmslib.')
         return index
 
-    def search_index(self, sentences, search_embeddings):
+    def search_index(self, sentences, search_embeddings, return_batch_ids=False):
         if self.index_type == 'nmslib':
-            batch_ids, batch_distances = self.index.knnQueryBatch(search_embeddings,
-                                                                  k=self.k,
-                                                                  num_threads=self.num_workers)
+            batch = self.index.knnQueryBatch(search_embeddings,
+                                             k=self.k,
+                                             num_threads=self.num_workers)
+            batch = np.array(batch)
+            batch_ids = batch[:, 0].astype(np.int)
+            batch_distances = batch[:, 1].astype(np.float32)
         elif self.index_type == 'faiss':
             batch_distances, batch_ids = self.index.search(np.array(search_embeddings), k=self.k)
         else:
@@ -40,6 +43,8 @@ class Index:
                                        sentences=sentences,
                                        articles_path=self.articles_path,
                                        mapping=self.mapping)
+        if return_batch_ids:
+            return results, batch_ids
         return results
 
     def _load_article(self, articles_path, paper_id):

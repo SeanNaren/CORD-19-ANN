@@ -9,7 +9,7 @@ parser.add_argument('--output_path', default="index",
                     help='Path to save index')
 parser.add_argument('--index_type', default="nmslib", type=str, choices=["nmslib", "faiss"],
                     help='Type of index you want like to create')
-parser.add_argument('--faiss_config', default='PCAR128,IVF65536_HNSW32,SQ8', type=str,
+parser.add_argument('--faiss_config', default='PCAR256,SQ8', type=str,
                     help='FAISS offers a large selection of parameters that can be seen here:'
                          'https://github.com/facebookresearch/faiss/wiki/Guidelines-to-choose-an-index')
 if __name__ == "__main__":

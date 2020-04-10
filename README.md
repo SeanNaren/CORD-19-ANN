@@ -78,6 +78,7 @@ This takes a few hours on a GCP n8 node with a nvidia-tesla-v100.
 
 Once trained the model is saved to the `output/` folder by default. Inside there you'll find checkpoints such as `output/training_nli_allenai/scibert_scivocab_cased-2020-03-30_10-51-49/` after training has finished. Use this as the model path when generating your embeddings.
 ```
+mkdkir datasets/
 python sentence-transformers/examples/datasets/get_data.py --output_path datasets/
 python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path allenai/scibert_scivocab_cased
 ```
