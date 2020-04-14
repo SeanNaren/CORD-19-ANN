@@ -82,6 +82,17 @@ function a11yProps(index) {
   };
 }
 
+function splitParagraph(paragraph, sentence) {
+  /**
+   Splits the paragraph into three sections to allow the matching sentence to be highlighted.
+   Note that this means multiple occurrences of the sentence are not highlighted.
+  */
+  var index = paragraph.indexOf(sentence);
+  return [paragraph.substring(0, index),
+               paragraph.substring(index, index + sentence.length),
+               paragraph.substring(index + sentence.length)];
+}
+
 export default function CustomizedTabs(item) {
   const classes = useStyles();
   const [value, setValue] = React.useState(0);
@@ -99,9 +110,15 @@ export default function CustomizedTabs(item) {
           <AntTab label="Similarity" {...a11yProps(2)}/>
         </AntTabs>
         <TabPanel value={value} index={0}>
-          <Typography variant='body1' >
-            {item.paragraph.text}
-          </Typography>
+            <Typography variant='body1' style={{display: 'inline'}}>
+              {splitParagraph(item.paragraph.text, item.sentence)[0]}
+            </Typography>
+            <Typography variant='body1' style={{fontWeight:"bold", display: 'inline'}} >
+              {splitParagraph(item.paragraph.text, item.sentence)[1]}
+            </Typography>
+            <Typography variant='body1' style={{display: 'inline'}}>
+              {splitParagraph(item.paragraph.text, item.sentence)[2]}
+            </Typography>
         </TabPanel>
         <TabPanel value={value} index={1}>
           <Typography variant='body1' >
@@ -110,7 +127,7 @@ export default function CustomizedTabs(item) {
         </TabPanel>
         <TabPanel value={value} index={2}>
           <Typography variant='overline' style={{fontSize:13, fontWeight:"bold"}} >
-            Cosine Distance: {Number((item.distance).toFixed(4))}
+            Distance: {Number((item.distance).toFixed(4))}
           </Typography>
         </TabPanel>
         <Typography className={classes.padding} />

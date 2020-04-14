@@ -1,13 +1,12 @@
 import argparse
 import json
 
-import nmslib
 import tornado.ioloop
 import tornado.web
-from cord_ann.mapping import load_mapping
 
-from search_index import search_index, add_search_args
-from cord_ann.embeddings import load_embedding_model
+from cord_ann.embeddings import EmbeddingModel
+from cord_ann.index import search_args, Index, paths_from_dataset_path
+from cord_ann.mapping import load_sentence_to_article_mapping, load_metadata
 
 
 class QueryHandler(tornado.web.RequestHandler):
@@ -19,12 +18,10 @@ class QueryHandler(tornado.web.RequestHandler):
     def data_received(self, chunk):
         pass
 
-    def initialize(self, args, model, articles, index, sent_article_mapping):
+    def initialize(self, args, model, index):
         self.args = args
-        self.articles = articles
         self.index = index
         self.model = model
-        self.sent_article_mapping = sent_article_mapping
 
     def options(self):
         # no body
@@ -38,48 +35,47 @@ class QueryHandler(tornado.web.RequestHandler):
         else:
             sentences = [self.request.body.decode("utf-8")]
             is_json = False
-        results = search_index(sentences=sentences,
-                               model=self.model,
-                               batch_size=self.args.batch_size,
-                               k=self.args.k,
-                               num_workers=self.args.num_workers,
-                               articles=self.articles,
-                               index=self.index,
-                               mapping=self.sent_article_mapping)
+        search_embeddings = self.model.encode_sentences(sentences=sentences)
+        results = self.index.search_index(sentences=sentences,
+                                          search_embeddings=search_embeddings)
         results = results if is_json else results[0]  # Assume if not json, it was a single sentence
-        self.write(json.dumps(results, ensure_ascii=False))
+        self.write(json.dumps(results))
         self.finish()
 
 
 def make_app(args):
     return tornado.web.Application([
         ('/query', QueryHandler, args),
-    ], debug=True)
+    ], debug=True, autoreload=False)
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser = add_search_args(parser)
+    parser = search_args(parser)
     parser.add_argument('--port', default=8888, type=int)
     parser.add_argument('--address', default="")
     args = parser.parse_args()
+    articles_path, _, mapping_path, metadata_path = paths_from_dataset_path(args.dataset_path)
+    sent_article_mapping = load_sentence_to_article_mapping(mapping_path)
+    metadata = load_metadata(metadata_path)
 
-    model = load_embedding_model(model_name_or_path=args.model_name_or_path,
-                                 device=args.device)
+    model = EmbeddingModel(model_name_or_path=args.model_name_or_path,
+                           device=args.device,
+                           batch_size=args.batch_size,
+                           show_progress_bar=not args.silent)
 
-    index = nmslib.init(method='hnsw', space='cosinesimil')
-    index.loadIndex(args.index_path)
+    index = Index(index_path=args.index_path,
+                  index_type=args.index_type,
+                  articles_path=articles_path,
+                  mapping=sent_article_mapping,
+                  metadata=metadata,
+                  k=args.k,
+                  num_workers=args.num_workers)
 
-    sent_article_mapping = load_mapping(args.mapping_path)
-
-    with open(args.articles_path) as f:
-        articles = json.load(f)
     app_arguments = {
         'args': args,
         'model': model,
-        'articles': articles,
         'index': index,
-        'sent_article_mapping': sent_article_mapping
     }
     app = make_app(args=app_arguments)
     print("Index Server is listening...")
