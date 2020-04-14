@@ -1,5 +1,5 @@
 import json
-
+import pandas as df
 from tqdm import tqdm
 
 
@@ -20,6 +20,12 @@ def load_sentence_to_article_mapping(mapping_path):
     with open(mapping_path) as f:
         mapping = json.load(f)
     return mapping
+
+
+def load_metadata(metadata_path):
+    # TODO not efficient to search metadata like this.
+    metadata_df = df.read_csv(metadata_path)
+    return metadata_df
 
 
 def flatten_sentences(articles):

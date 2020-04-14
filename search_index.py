@@ -2,7 +2,7 @@ import argparse
 import json
 from pathlib import Path
 
-from cord_ann.mapping import load_sentence_to_article_mapping
+from cord_ann.mapping import load_sentence_to_article_mapping, load_metadata
 
 from cord_ann.embeddings import EmbeddingModel
 from cord_ann.index import search_args, Index
@@ -15,6 +15,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     sentences = Path(args.input_path).read_text().strip().split('\n')
     sent_article_mapping = load_sentence_to_article_mapping(args.mapping_path)
+    metadata = load_metadata(args.metadata_path)
 
     model = EmbeddingModel(model_name_or_path=args.model_name_or_path,
                            device=args.device,
@@ -25,6 +26,7 @@ if __name__ == "__main__":
                   index_type=args.index_type,
                   articles_path=args.articles_path,
                   mapping=sent_article_mapping,
+                  metadata=metadata,
                   k=args.k,
                   num_workers=args.num_workers)
     search_embeddings = model.encode_sentences(sentences=sentences)

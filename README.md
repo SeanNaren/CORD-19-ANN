@@ -60,9 +60,8 @@ wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/bluebert_fa
 wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/biobert_faiss_PCAR128_SQ8
 
 # Download metadata 
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/cord_19_sent_to_article_mapping.json
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/journals.tar.gz
-tar -xzvf journals.tar.gz journals/
+wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/dataset_formatted_2020_03_27.tar.gz
+tar -xzvf dataset_formatted_2020_03_27.tar.gz dataset_formatted/
 ```
 
 ## Searching the Index
@@ -73,7 +72,7 @@ We recommend using the server but we do offer a simple script to search given a 
 
 ```
 echo "These RNA transcripts may be spliced to give rise to mRNAs encoding the envelope (Env) glycoproteins (Fig. 1a)" > sentences.txt
-python search_index.py --index_path bluebert_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-bluebert-pretrained/ --articles_path journals/ --mapping_path cord_19_sent_to_article_mapping.json --input_path sentences.txt --output_path output.json
+python search_index.py --index_path bluebert_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-bluebert-pretrained/ --articles_path dataset_formatted/journals/ --mapping_path dataset_formatted/cord_19_sent_to_article_mapping.json --input_path sentences.txt --output_path output.json
 ```
 
 #### Using the server
@@ -82,7 +81,7 @@ To start the server:
 ```
 YOUR_IP=0.0.0.0
 YOUR_PORT=1337
-python index_server.py --index_path bluebert_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-bluebert-pretrained/ --articles_path journals/ --mapping_path cord_19_sent_to_article_mapping.json --address $YOUR_IP --port $YOUR_PORT --silent
+python index_server.py --index_path bluebert_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-bluebert-pretrained/ --articles_path dataset_formatted/journals/ --mapping_path dataset_formatted/cord_19_sent_to_article_mapping.json --address $YOUR_IP --port $YOUR_PORT --silent
 ```
 
 To test the server:

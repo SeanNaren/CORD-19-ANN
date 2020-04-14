@@ -6,7 +6,7 @@ import tornado.web
 
 from cord_ann.embeddings import EmbeddingModel
 from cord_ann.index import search_args, Index
-from cord_ann.mapping import load_sentence_to_article_mapping
+from cord_ann.mapping import load_sentence_to_article_mapping, load_metadata
 
 
 class QueryHandler(tornado.web.RequestHandler):
@@ -56,6 +56,7 @@ if __name__ == "__main__":
     parser.add_argument('--address', default="")
     args = parser.parse_args()
     sent_article_mapping = load_sentence_to_article_mapping(args.mapping_path)
+    metadata = load_metadata(args.metadata_path)
 
     model = EmbeddingModel(model_name_or_path=args.model_name_or_path,
                            device=args.device,
@@ -66,6 +67,7 @@ if __name__ == "__main__":
                   index_type=args.index_type,
                   articles_path=args.articles_path,
                   mapping=sent_article_mapping,
+                  metadata=metadata,
                   k=args.k,
                   num_workers=args.num_workers)
 

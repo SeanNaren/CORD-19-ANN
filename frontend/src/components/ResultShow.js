@@ -77,15 +77,15 @@ export default function ResultShow(props) {
                         aria-controls="panel1bh-content"
                         id="panel1bh-header"
                     >
-                        <Typography className={classes.heading} variant='h1'>{item.title === "" ? 'No Title' : item.title}</Typography>
+                        <Typography className={classes.heading} variant='h1'>{item.metadata.title === "" ? 'No Title' : item.metadata.title}</Typography>
                         <Typography className={classes.secondaryHeading} variant='body1'>Matching Sentence: {item.sentence}</Typography>
                     </ExpansionPanelSummary>
                     <ExpansionPanelDetails className={classes.expansionDetails}>
                         <div className={classes.authors}>
-                            {item.authors.map((author, i) => {
+                            {item.metadata.authors.map((author, i) => {
                                 return (
                                     <Typography variant='body2' key={i} display='initial'>
-                                        {author.first} {author.last}{i === item.authors.length - 1 ? null : ','} &nbsp;</Typography>)
+                                        {author.first} {author.last}{i === item.metadata.length - 1 ? null : ','} &nbsp;</Typography>)
                             })}
                         </div>
                         <div>

@@ -5,11 +5,12 @@ import numpy as np
 
 
 class Index:
-    def __init__(self, index_path, index_type, articles_path, mapping, k, num_workers):
+    def __init__(self, index_path, index_type, articles_path, mapping, metadata, k, num_workers):
         self.index = self.load_index(index_path, index_type)
         self.index_type = index_type
         self.articles_path = articles_path
         self.mapping = mapping
+        self.metadata = metadata
         self.k = k
         self.num_workers = num_workers
 
@@ -53,6 +54,10 @@ class Index:
             article = json.load(f)
         return article
 
+    def _find_metadata(self, paper_id):
+        metadata = self.metadata[self.metadata['sha'] == paper_id]
+        return metadata.to_dict()
+
     def _extract_k_hits(self, ids, distances, sentence, articles_path, sent_article_mapping):
         extracted = {
             "query": sentence,
@@ -63,15 +68,16 @@ class Index:
             mapping = sent_article_mapping[id]
             paragraph_idx = mapping["paragraph_idx"]
             sentence_idx = mapping["sentence_idx"]
+            paper_id = mapping["paper_id"]
             article = self._load_article(articles_path=articles_path,
-                                         paper_id=mapping["paper_id"])
+                                         paper_id=paper_id)
+            metadata = self._find_metadata(paper_id)
             extracted["hits"].append({
-                "title": article['metadata']['title'],
-                "authors": article['metadata']['authors'],
-                "paragraph": article['body_text'][paragraph_idx],
-                "sentence": article['body_text'][paragraph_idx]["sentences"][sentence_idx],
-                "abstract": article['abstract'],
-                "distance": float(distance)
+                'paragraph': article['body_text'][paragraph_idx],
+                'sentence': article['body_text'][paragraph_idx]["sentences"][sentence_idx],
+                'abstract': article['abstract'],
+                'distance': float(distance),
+                'metadata': metadata,
             })
         return extracted
 
@@ -90,6 +96,8 @@ def search_args(parser):
                         help='Type of index')
     parser.add_argument('--articles_path', default="datasets/cord_19/cord_19.json",
                         help='Path to the extracted sentences')
+    parser.add_argument('--metadata_path', default="datasets/cord_19/metadata.csv",
+                        help='Path to the metadata csv')
     parser.add_argument('--mapping_path', default="datasets/cord_19/cord_19_sent_to_article_mapping.json",
                         help='Path to the generated mapping from the embeddings script')
     parser.add_argument('--model_name_or_path', default='bert-base-nli-mean-tokens')
