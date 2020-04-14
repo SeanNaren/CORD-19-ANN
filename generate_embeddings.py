@@ -6,7 +6,7 @@ from cord_ann.embeddings import EmbeddingModel
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--sentences_path', default="datasets/cord_19/cord_19_sentences.txt",
+    parser.add_argument('--sentences_path', default="cord_19_dataset_formatted/cord_19_sentences.txt",
                         help='Path to extracted sentences')
     parser.add_argument('--embedding_path', default="embeddings.npy",
                         help='Output path of the generated embeddings')

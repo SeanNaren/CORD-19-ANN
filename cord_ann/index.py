@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 
 
 class Index:
@@ -56,7 +57,16 @@ class Index:
 
     def _find_metadata(self, paper_id):
         metadata = self.metadata[self.metadata['sha'] == paper_id]
-        return metadata.to_dict()
+        if len(metadata) == 1:
+            metadata = metadata.iloc[0].to_dict()
+            return {
+                'doi': metadata['doi'] if not pd.isna(metadata['doi']) else 'N/A',
+                'url': metadata['url'] if not pd.isna(metadata['url']) else 'N/A',
+                'journal': metadata['journal'] if not pd.isna(metadata['journal']) else 'N/A',
+                'publish_time': metadata['publish_time'] if not pd.isna(metadata['publish_time']) else 'N/A',
+            }
+        else:
+            return None  # No metadata was found
 
     def _extract_k_hits(self, ids, distances, sentence, articles_path, sent_article_mapping):
         extracted = {
@@ -71,14 +81,18 @@ class Index:
             paper_id = mapping["paper_id"]
             article = self._load_article(articles_path=articles_path,
                                          paper_id=paper_id)
-            metadata = self._find_metadata(paper_id)
-            extracted["hits"].append({
+            hit = {
+                'title': article['metadata']['title'],
+                'authors': article['metadata']['authors'],
                 'paragraph': article['body_text'][paragraph_idx],
                 'sentence': article['body_text'][paragraph_idx]["sentences"][sentence_idx],
                 'abstract': article['abstract'],
                 'distance': float(distance),
-                'metadata': metadata,
-            })
+            }
+            metadata = self._find_metadata(paper_id)
+            if metadata:
+                hit['metadata'] = metadata
+            extracted["hits"].append(hit)
         return extracted
 
     def _format_results(self, batch_ids, batch_distances, sentences, articles_path, mapping):
@@ -94,12 +108,8 @@ def search_args(parser):
                         help='Path to the created index')
     parser.add_argument('--index_type', default="nmslib", type=str, choices=["nmslib", "faiss"],
                         help='Type of index')
-    parser.add_argument('--articles_path', default="datasets/cord_19/cord_19.json",
-                        help='Path to the extracted sentences')
-    parser.add_argument('--metadata_path', default="datasets/cord_19/metadata.csv",
-                        help='Path to the metadata csv')
-    parser.add_argument('--mapping_path', default="datasets/cord_19/cord_19_sent_to_article_mapping.json",
-                        help='Path to the generated mapping from the embeddings script')
+    parser.add_argument('--dataset_path', default="cord_19_dataset_formatted/",
+                        help='Path to the extracted dataset')
     parser.add_argument('--model_name_or_path', default='bert-base-nli-mean-tokens')
     parser.add_argument('--batch_size', default=8, type=int,
                         help='Batch size for the transformer model encoding')
@@ -112,3 +122,17 @@ def search_args(parser):
     parser.add_argument('--silent', action="store_true",
                         help='Turn off progress bar when searching')
     return parser
+
+
+def paths_from_dataset_path(dataset_path):
+    """
+    Creates paths to the files required for searching the index.
+    :param dataset_path: The path to the extracted dataset.
+    :return: Paths to various important files/folders for searching the index.
+    """
+    dataset_path = Path(dataset_path)
+    articles_path = dataset_path / 'articles/'
+    sentences_path = dataset_path / 'cord_19_sentences.txt'
+    metadata_path = dataset_path / 'cord_19_sent_to_article_mapping.json'
+    mapping_path = dataset_path / 'metadata.csv'
+    return articles_path, sentences_path, mapping_path, metadata_path

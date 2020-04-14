@@ -5,7 +5,7 @@ import tornado.ioloop
 import tornado.web
 
 from cord_ann.embeddings import EmbeddingModel
-from cord_ann.index import search_args, Index
+from cord_ann.index import search_args, Index, paths_from_dataset_path
 from cord_ann.mapping import load_sentence_to_article_mapping, load_metadata
 
 
@@ -39,7 +39,7 @@ class QueryHandler(tornado.web.RequestHandler):
         results = self.index.search_index(sentences=sentences,
                                           search_embeddings=search_embeddings)
         results = results if is_json else results[0]  # Assume if not json, it was a single sentence
-        self.write(json.dumps(results, ensure_ascii=False))
+        self.write(json.dumps(results))
         self.finish()
 
 
@@ -55,8 +55,9 @@ if __name__ == "__main__":
     parser.add_argument('--port', default=8888, type=int)
     parser.add_argument('--address', default="")
     args = parser.parse_args()
-    sent_article_mapping = load_sentence_to_article_mapping(args.mapping_path)
-    metadata = load_metadata(args.metadata_path)
+    articles_path, _, mapping_path, metadata_path = paths_from_dataset_path(args.dataset_path)
+    sent_article_mapping = load_sentence_to_article_mapping(mapping_path)
+    metadata = load_metadata(metadata_path)
 
     model = EmbeddingModel(model_name_or_path=args.model_name_or_path,
                            device=args.device,
@@ -65,7 +66,7 @@ if __name__ == "__main__":
 
     index = Index(index_path=args.index_path,
                   index_type=args.index_type,
-                  articles_path=args.articles_path,
+                  articles_path=articles_path,
                   mapping=sent_article_mapping,
                   metadata=metadata,
                   k=args.k,

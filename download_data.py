@@ -10,7 +10,7 @@ metadata = "metadata.csv"
 server = "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/2020-03-27/"
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--output_path', default="datasets/cord_19/")
+    parser.add_argument('--output_path', default="cord_19_dataset/")
     args = parser.parse_args()
     os.makedirs(args.output_path, exist_ok=True)
 
