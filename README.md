@@ -20,7 +20,6 @@ Currently we do not have a server running (if anyone can help that would be grea
 ### Source
 We assume you have installed PyTorch and the necessary CUDA packages from [here](https://pytorch.org/). We suggest using Conda to make installation easier.
 ```
-
 # Install FAISS
 conda install faiss-cpu -c pytorch # Other instructions can be found at https://github.com/facebookresearch/faiss/blob/master/INSTALL.md
 
@@ -28,11 +27,6 @@ git clone https://github.com/SeanNaren/CORD-19-ANN.git --recursive
 cd CORD-19-ANN/
 pip install -r requirements.txt
 pip install .
-
-# If you plan to finetune SciBERT from scratch using mixed-precision
-git clone https://github.com/NVIDIA/apex.git
-cd apex/
-pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 ```
 
 ### Docker

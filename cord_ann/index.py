@@ -133,6 +133,6 @@ def paths_from_dataset_path(dataset_path):
     dataset_path = Path(dataset_path)
     articles_path = dataset_path / 'articles/'
     sentences_path = dataset_path / 'cord_19_sentences.txt'
-    metadata_path = dataset_path / 'cord_19_sent_to_article_mapping.json'
-    mapping_path = dataset_path / 'metadata.csv'
+    mapping_path = dataset_path / 'cord_19_sent_to_article_mapping.json'
+    metadata_path = dataset_path / 'metadata.csv'
     return articles_path, sentences_path, mapping_path, metadata_path
