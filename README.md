@@ -1,9 +1,9 @@
 # CORD-19-ANN
 
-![cord_website](./imgs/cord_ann_example.gif)
+![cord_website](imgs/cord_ann_example.gif)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/137jbpY3yQJGSzlLHZGUYBk5F78bwuqKJ) [GitHub Pages](https://seannaren.github.io/CORD-19-ANN/) 
 
-This repo allows searching through the [CORD-19](https://pages.semanticscholar.org/coronavirus-research) 
-dataset using [S-BERT](https://github.com/UKPLab/sentence-transformers) embeddings via [nmslib](https://github.com/nmslib/nmslib/blob/master/python_bindings/README.md) or [faiss](https://github.com/facebookresearch/faiss).
+This repo contains the scripts and models to search [CORD-19](https://pages.semanticscholar.org/coronavirus-research) using [S-BERT](https://github.com/UKPLab/sentence-transformers) embeddings via [nmslib](https://github.com/nmslib/nmslib/blob/master/python_bindings/README.md) or [faiss](https://github.com/facebookresearch/faiss).
 
 Sentence embeddings are not perfect for searching (see [this issue](https://github.com/UKPLab/sentence-transformers/issues/174)) however can provide insight into the data that basic search functionality cannot. There is still room to improve the retrieval of relevant documents.
 
@@ -13,7 +13,7 @@ We've included pre-trained models and the FAISS index to start your own server w
 
 Finally we provide a front-end that can be used to search through the dataset and extract information via a UI. Instructions and installation for the front-end can be found [here](frontend/README.md).
 
-Currently we do not have a server running (if anyone can help that would be great!). We'll work to try provide the index and metadata such that setup is not required from scratch.
+We currently are hosting the server on a gcp instance, if anyone can contribute for a more permanent hosting solution it would be appreciated.
 
 ## Installation
 
@@ -42,31 +42,33 @@ sudo docker run -it --net=host --ipc=host --entrypoint=/bin/bash --rm seannaren/
 
 We currently offer sentence models trained on [BlueBERT](https://github.com/ncbi-nlp/bluebert) (base uncased model) and [BioBERT](https://github.com/naver/biobert-pretrained) (base cased model) with the appropriate metadata/index. We currently serve S-BlueBERT however it is interchangeable.
 
+
+### Download S-BERT Models and Search Index
+
+Download the corresponding Model and Index file. We suggest using S-BioBERT and assume you have done so for the subsequent commands. They are interchangeable however.
+
+| Model                       | Index                          | Test MedNLI Accuracy | Test STS Benchmark Cosine Pearson |
+|-----------------------------|--------------------------------|-----------------|------------------------------|
+| [S-BioBERT Base Cased](https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-biobert_base_cased_mli.tar.gz)    | [BioBERT_faiss_PCAR128_SQ8](https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/biobert_mli_faiss_PCAR128_SQ8)  | 0.7482          | 0.7122                       |
+| [S-BlueBERT Base Uncased](https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-bluebert_base_uncased_mli.tar.gz) | [BlueBERT_faiss_PCAR128_SQ8](https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/bluebert_mli_faiss_PCAR128_SQ8) | 0.7525          | 0.6923                       |
+| S-Bert Base Cased             |                                | 0.5689          | 0.7265                       |
+
+
+### Download Metadata
 ```
-# Choose which model you'd like to download
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-bluebert-pretrained.tar.gz 
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-biobert-pretrained.tar.gz
-tar -xzvf s-bluebert-pretrained.tar.gz
-tar -xzvf s-bluebert-pretrained.tar.gz
-
-# Download index based on the above choice
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/bluebert_faiss_PCAR128_SQ8
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/biobert_faiss_PCAR128_SQ8
-
-# Download metadata 
 wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/cord_19_dataset_formatted_2020_03_27.tar.gz
-tar -xzvf dataset_formatted_2020_03_27.tar.gz cord_19_dataset_formatted/
+tar -xzvf cord_19_dataset_formatted_2020_03_27.tar.gz cord_19_dataset_formatted/
 ```
 
 ## Searching the Index
 
-We assume you've chosen the s-bluebert model, it should be straightforward to swap in any other pre-trained models offered in this repo by modifying the paths below.
+We assume you've chosen the s-biobert model, it should be straightforward to swap in any other pre-trained models offered in this repo by modifying the paths below.
 
 We recommend using the server but we do offer a simple script to search given a text file of sentences:
 
 ```
 echo "These RNA transcripts may be spliced to give rise to mRNAs encoding the envelope (Env) glycoproteins (Fig. 1a)" > sentences.txt
-python search_index.py --index_path bluebert_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-bluebert-pretrained/ --dataset_path cord_19_dataset_formatted/ --input_path sentences.txt --output_path output.json
+python search_index.py --index_path biobert_mli_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-biobert_base_cased_mli/ --dataset_path cord_19_dataset_formatted/ --input_path sentences.txt --output_path output.json
 ```
 
 #### Using the server
@@ -75,7 +77,7 @@ To start the server:
 ```
 YOUR_IP=0.0.0.0
 YOUR_PORT=1337
-python index_server.py --index_path bluebert_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-bluebert-pretrained/ --dataset_path cord_19_dataset_formatted/ --address $YOUR_IP --port $YOUR_PORT --silent
+python index_server.py --index_path biobert_mli_faiss_PCAR128_SQ8 --index_type faiss --model_name_or_path s-biobert_base_cased_mli/ --dataset_path cord_19_dataset_formatted/ --address $YOUR_IP --port $YOUR_PORT --silent
 ```
 
 To test the server:
@@ -114,7 +116,7 @@ The output from the index is a JSON object containing the top K hits from the in
 
 ## Creating the Index from scratch
 
-The process requires a GPU enabled node such as a GCP n8 node with a nvidia-tesla-v100 to generate the embeddings, with at-least 40GB RAM.
+The process requires a GPU enabled node such as a GCP n8 node with a nvidia-tesla-v100 to generate the embeddings, with at-least 20GB RAM.
 
 ### Preparing the dataset
 
@@ -133,15 +135,17 @@ python extract_sentences.py --num_workers 16
 Using sentence-transformers we can fine-tune either model. BlueBERT offers only uncased models whereas BioBERT offer a cased model. We've converted them into PyTorch format and included them in releases, to download:
 
 ```
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-biobert-pretrained.tar.gz
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-bluebert-pretrained.tar.gz 
+wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-biobert_base_cased_mli.tar.gz
+wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/s-bluebert_base_uncased_mli.tar.gz
+tar -xzvf s-biobert_base_cased_mli.tar.gz
+tar -xzvf s-bluebert_base_uncased_mli.tar.gz
 ```
 
 ##### Using Pre-trained BioBERT/BlueBERT
 
 ```
-python generate_embeddings.py --model_name_or_path s-biobert-pretrained/ --embedding_path biobert_embeddings.npy --device cuda --batch_size 256 # If you want to use biobert
-python generate_embeddings.py --model_name_or_path s-bluebert-pretrained/ --embedding_path bluebert_embeddings.npy --device cuda --batch_size 256 # If you want to use bluebert
+python generate_embeddings.py --model_name_or_path s-biobert_base_cased_mli/ --embedding_path biobert_embeddings.npy --device cuda --batch_size 256 # If you want to use biobert
+python generate_embeddings.py --model_name_or_path s-bluebert_base_uncased_mli/ --embedding_path bluebert_embeddings.npy --device cuda --batch_size 256 # If you want to use bluebert
 ```
 
 #### Using pre-trained S-BERT models
@@ -156,16 +160,24 @@ python generate_embeddings.py --model_name_or_path bert-base-nli-mean-tokens --e
 
 This takes a few hours on a V100 GPU.
 
+If you'd like to include the MedNLI dataset during training, you'll need to download the dataset from [here](https://physionet.org/content/mednli/1.0.0/). Getting access requires credentialed access which requires some efforts and a waiting period of up to two weeks.
+
 Once trained the model is saved to the `output/` folder by default. Inside there you'll find checkpoints such as `output/training_nli/biobert-2020-03-30_10-51-49/` after training has finished. Use this as the model path when generating your embeddings.
 
 ```
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/biobert-pretrained.tar.gz
-wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/bluebert-pretrained.tar.gz 
+wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/biobert_cased_v1.1.tar.gz
+wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/bluebert_base_uncased.tar.gz
+tar -xzvf biobert_cased_v1.1.tar.gz
+tar -xzvf bluebert_base_uncased.tar.gz
 
 mkdkir datasets/
 python sentence-transformers/examples/datasets/get_data.py --output_path datasets/
-python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path biobert-pretrained.tar.gz
-python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path bluebert-pretrained.tar.gz --do_lower_case
+python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path biobert_cased_v1.1/
+python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path bluebert_base_uncased/ --do_lower_case
+
+# Training with medNLI
+python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path biobert_cased_v1.1/ --mli_dataset_path path/to/mednli/
+python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path bluebert_base_uncased/ --mli_dataset_path path/to/mednli/ --do_lower_case
 ```
 
 ### Create the Index
@@ -181,8 +193,10 @@ python create_index.py --output_path index --embedding_path pretrained_embedding
 We also took the example clustering script out of sentence-transformers and added it to this repository for using the pre-trained models. An example below:
 
 ```
-python cluster_sentences.py --input_path sentences.txt --model_name_or_path s-scibert-pretrained/ --device cpu
+python cluster_sentences.py --input_path sentences.txt --model_name_or_path biobert_cased_v1.1/ --device cpu
 ```
+
+There is also a more interactive version available using the Google Colab demo: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/137jbpY3yQJGSzlLHZGUYBk5F78bwuqKJ) 
 
 ## Acknowledgements
 
