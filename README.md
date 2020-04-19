@@ -57,7 +57,7 @@ Download the corresponding Model and Index file. We suggest using S-BioBERT and 
 ### Download Metadata
 ```
 wget https://github.com/SeanNaren/CORD-19-ANN/releases/download/V1.0/cord_19_dataset_formatted_2020_03_27.tar.gz
-tar -xzvf dataset_formatted_2020_03_27.tar.gz cord_19_dataset_formatted/
+tar -xzvf cord_19_dataset_formatted_2020_03_27.tar.gz cord_19_dataset_formatted/
 ```
 
 ## Searching the Index
