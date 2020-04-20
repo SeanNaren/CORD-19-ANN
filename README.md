@@ -1,7 +1,8 @@
 # CORD-19-ANN
 
 ![cord_website](imgs/cord_ann_example.gif)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/137jbpY3yQJGSzlLHZGUYBk5F78bwuqKJ) [GitHub Pages](https://seannaren.github.io/CORD-19-ANN/) 
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/137jbpY3yQJGSzlLHZGUYBk5F78bwuqKJ) [![Open In Colab](https://github.com/aleen42/badges/raw/master/src/medium.svg)](https://medium.com/@seannaren/cord-19-ann-semantic-search-engine-using-s-bert-aebc5bcc5442?sk=92ea4a22df3cd1343c86a1e880b78f6f) [GitHub Pages](https://seannaren.github.io/CORD-19-ANN/)
 
 This repo contains the scripts and models to search [CORD-19](https://pages.semanticscholar.org/coronavirus-research) using [S-BERT](https://github.com/UKPLab/sentence-transformers) embeddings via [nmslib](https://github.com/nmslib/nmslib/blob/master/python_bindings/README.md) or [faiss](https://github.com/facebookresearch/faiss).
 
