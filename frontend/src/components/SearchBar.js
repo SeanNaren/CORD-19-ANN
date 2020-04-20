@@ -39,7 +39,7 @@ export default function SearchBar() {
 
     const handleClick = ev => {
       setLoading(true);
-      getSearchResults(ev.target.value).then(res=>{
+      getSearchResults(sentence).then(res=>{
         setResponse(res.data);
         setLoading(false);
       });
