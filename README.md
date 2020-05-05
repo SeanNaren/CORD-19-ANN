@@ -181,6 +181,8 @@ python sentence-transformers/examples/training_nli_transformers.py --model_name_
 python sentence-transformers/examples/training_nli_transformers.py --model_name_or_path bluebert_base_uncased/ --mli_dataset_path path/to/mednli/ --do_lower_case
 ```
 
+To exclude the MedNLI but still evaluate on the data (still requires the MedNLI dataset), use the `--exclude_mli`.
+
 ### Create the Index
 
 We have the ability to use faiss or nmslib given the parameter below. We've exposed the FAISS config string for modifying the index. More details about selecting the index can be seen [here](https://github.com/facebookresearch/faiss/wiki/Guidelines-to-choose-an-index).
